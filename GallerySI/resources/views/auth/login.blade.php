@@ -5,7 +5,6 @@
         <a href="{{ url()->previous() }}"><img src="{{ asset('images/back.png') }}" alt="back" width="47px"
                 class="back"></a>
         <div class="header-content mt-4 d-flex">
-            <img src="{{ asset('images/logo-text-dark.png') }}" alt="logo" width="182px">
         </div>
         <div class="box-form mt-2">
             <h3>MASUK</h3>
