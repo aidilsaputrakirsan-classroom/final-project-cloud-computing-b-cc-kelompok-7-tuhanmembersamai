@@ -5,7 +5,7 @@
     <div class="hero-content">
         <h1>Bikin karya?</h1>
         <h1>Ayo, tunjukin karyamu!</h1>
-        <p><strong>Gallery Sistem Informasi</strong> hadir untuk memberikan tempat bagi semua orang membagikan karya dan
+        <p><strong>Galeri Karya Indonesia</strong> hadir untuk memberikan tempat bagi semua orang membagikan karya dan
             portofolio</p>
         <div class="share">
             <a href="{{ route('login') }}" class="btn-share">Share Sekarang</a>
@@ -13,20 +13,19 @@
         </div>
     </div>
     <div class="hero-image">
-        <img src="{{ asset('images/hero.png') }}" alt="hero" class="hero-img">
     </div>
 </div>
 <div class="about" id="aboutme">
     <h1>Tentang Kami</h1>
     <div class="about-content mt-4">
-        <p>Selamat datang di Gallery SI, tempat bagi para kreator yang ingin berbagi karya mereka dengan
+        <p>Selamat datang di GallerySI, tempat bagi para kreator yang ingin berbagi karya mereka dengan
             dunia.
             Kami hadir dengan memberikan platform yang memungkinkan individu untuk memperluas jangkauan dan pengaruh
             dari
             karya-karya mereka.</p>
-        <p>Gallery SI menyediakan ruang untuk para kreator memamerkan bakat mereka dalam berbagai bentuk, mulai dari gambar,
+        <p>GallerySI menyediakan ruang untuk para kreator memamerkan bakat mereka dalam berbagai bentuk, mulai dari gambar,
             desain, tulisan, hingga karya-karya kreatif lainnya.</p>
-        <p>Bergabunglah dengan Gallery SI dan jadilah bagian dari perjalanan kreatif ini. Mari bersama-sama menciptakan
+        <p>Bergabunglah dengan GallerySI dan jadilah bagian dari perjalanan kreatif ini. Mari bersama-sama menciptakan
             ruang di
             mana setiap karya dihargai, setiap pencapaian diakui, dan setiap individu diberdayakan untuk berkembang dan
             bersinar dalam dunia kreatif.</p>
