@@ -1,5 +1,5 @@
 <header>
-    <img src=" class="logo">
+    <img src="{{ asset(path: 'images/logo.png') }}" class="logo">
     <nav>
         <ul class="nav-links">
             <li class="nav-item {{ Request::is('/', '/*') ? 'active' : '' }}"><a href="/">Home</a></li>

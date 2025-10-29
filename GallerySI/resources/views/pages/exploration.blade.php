@@ -6,7 +6,8 @@
     <div class="exploration-category mt-5 d-flex align-items-center">
         <div class="row">
             <div class="choice-chip-container d-flex flex-wrap justify-content-center">
-                <button class="choice-chip active">Digital Art</button>
+                <button class="choice-chip active">All</button>
+                <button class="choice-chip">Digital Art</button>
                 <button class="choice-chip">Poster</button>
                 <button class="choice-chip">Web Design</button>
                 <button class="choice-chip">Wallpaper</button>
