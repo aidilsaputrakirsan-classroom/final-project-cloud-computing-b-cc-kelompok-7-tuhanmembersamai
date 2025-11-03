@@ -16,7 +16,10 @@ class ExplorationController extends Controller
      */
     public function index()
     {
-        $artworks = Artwork::with('user', 'category')->select('id', 'image', 'description', 'user_id')->where('category_id', 1)->get();
+        $artworks = Artwork::with('user', 'category')
+            ->select('id', 'image', 'description', 'user_id')
+            ->where('category_id', 1)
+            ->get();
 
         return view('pages.exploration', compact('artworks'));
     }
@@ -31,6 +34,8 @@ class ExplorationController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * (This method is used by your category-filter AJAX in the current code.)
      */
     public function store(Request $request)
     {
@@ -41,7 +46,62 @@ class ExplorationController extends Controller
             })
             ->select('id', 'image', 'description', 'user_id')
             ->get();
-        return response()->json($artworks);
+
+        // Map to the minimal structure expected by the frontend
+        $payload = $artworks->map(function ($a) {
+            return [
+                'id' => $a->id,
+                'image' => $a->image,
+                'description' => $a->description,
+                'user' => [
+                    'name' => $a->user ? $a->user->name : null,
+                    'image' => $a->user ? $a->user->image : null,
+                ],
+            ];
+        });
+
+        return response()->json($payload);
+    }
+
+    /**
+     * Search artworks by category name OR description.
+     *
+     * Endpoint: POST /eksplorasi/search
+     * Request payload: { query: "text" }
+     * Response: JSON array of artworks with structure:
+     * { id, image, description, user: { name, image } }
+     */
+    public function search(Request $request)
+    {
+        $query = (string) $request->input('query', '');
+
+        // jika query kosong, kembalikan array kosong (ubah jika mau kembalikan semua)
+        if (trim($query) === '') {
+            return response()->json([]);
+        }
+
+        $artworks = Artwork::with('user')
+            ->whereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%');
+            })
+            ->orWhere('description', 'like', '%' . $query . '%')
+            ->select('id', 'image', 'description', 'user_id')
+            ->get();
+
+        // format respons agar sesuai struktur yang frontend harapkan
+        $payload = $artworks->map(function ($a) {
+            return [
+                'id' => $a->id,
+                'image' => $a->image,
+                'description' => $a->description,
+                'user' => [
+                    'name' => $a->user ? $a->user->name : null,
+                    'image' => $a->user ? $a->user->image : null,
+                ],
+            ];
+        });
+
+        return response()->json($payload);
     }
 
     /**
