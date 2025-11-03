@@ -8,6 +8,7 @@ use App\Models\Category;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArtworkController extends Controller
 {
@@ -17,19 +18,15 @@ class ArtworkController extends Controller
     public function index()
     {
         $user_id = Auth::id();
-        $artworks = Artwork::select('id', 'image', 'description', 'category_id')->with('user', 'category')->where('user_id', $user_id)->get();
+        $artworks = Artwork::with(['user', 'category'])
+            ->where('user_id', $user_id)
+            ->select('id', 'image', 'description', 'category_id')
+            ->get();
+
         $categories = Category::select('id', 'name')->get();
         $profile = Auth::user();
 
         return view('pages.profile', compact('artworks', 'categories', 'profile'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -38,49 +35,26 @@ class ArtworkController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id' => 'required|integer',
+            'category_id' => 'required|integer|exists:categories,id',
             'description' => 'required|string',
-            'image' => 'required|mimes:png,jpg,jpeg|max:5048'
+            'image' => 'required|image|mimes:png,jpg,jpeg|max:5048',
         ]);
+
         try {
-            $data = $request->all();
+            // Simpan file gambar ke storage/app/public/artwork
+            $path = $request->file('image')->store('artwork', 'public');
 
-            $image = $request->file('image');
-            $image->storeAs('public/artwork', $image->hashName());
+            Artwork::create([
+                'user_id' => Auth::id(),
+                'category_id' => $request->category_id,
+                'description' => $request->description,
+                'image' => $path, // simpan path lengkap, contoh: artwork/abcd123.jpg
+            ]);
 
-            $data['image'] = $image->hashName();
-            $data['user_id'] = auth()->id();
-
-            Artwork::create($data);
-
-            return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!!');
+            return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
         } catch (Exception $e) {
-            return redirect()->route('profile.index')->with('error', 'Artwork Gagal ditambahkan!!');
+            return redirect()->route('profile.index')->with('error', 'Artwork gagal ditambahkan!');
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 
     /**
@@ -89,17 +63,19 @@ class ArtworkController extends Controller
     public function destroy(string $id)
     {
         try {
-            $artwork = Artwork::with(['user', 'category'])->findOrFail($id);
+            $artwork = Artwork::findOrFail($id);
 
-            if (isset($artwork->image)) {
-                unlink("storage/artwork/" . $artwork->image);
+            // Hapus file gambar dari storage
+            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
+                Storage::disk('public')->delete($artwork->image);
             }
 
+            // Hapus record dari database
             $artwork->delete();
 
-            return redirect()->route('profile.index')->with('success', 'Artwork berhasil dihapus!!');
+            return redirect()->route('profile.index')->with('success', 'Artwork berhasil dihapus!');
         } catch (Exception $e) {
-            return redirect()->route('profile.index')->with('error', 'Artwork Gagal dihapus!!');
+            return redirect()->route('profile.index')->with('error', 'Artwork gagal dihapus!');
         }
     }
 }
