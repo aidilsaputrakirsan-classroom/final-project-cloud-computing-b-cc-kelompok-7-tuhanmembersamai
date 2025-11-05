@@ -5,7 +5,7 @@
     <div class="hero-content">
         <h1>Bikin karya?</h1>
         <h1>Ayo, tunjukin karyamu!</h1>
-        <p><strong>Galeri Karya Indonesia</strong> hadir untuk memberikan tempat bagi semua orang membagikan karya dan
+        <p><strong>Gallery SI</strong> hadir untuk memberikan tempat bagi semua orang membagikan karya dan
             portofolio</p>
         <div class="share">
             <a href="{{ route('login') }}" class="btn-share">Share Sekarang</a>
