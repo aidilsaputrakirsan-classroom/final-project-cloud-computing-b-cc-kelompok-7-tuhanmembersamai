@@ -2,7 +2,7 @@
 
 @section('section')
     <div class="profile-container">
-        <a href="{{ route('landing') }}"><img src="{{ asset('images/back.png') }}" alt="back" width="40px"
+        <a href="{{ route('exploration') }}"><img src="{{ asset('images/back.png') }}" alt="back" width="40px"
                 class="back"></a>
         <div class="profile-info">
             @if ($profile->image)

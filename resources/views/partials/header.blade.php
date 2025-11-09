@@ -2,10 +2,8 @@
     <img src="{{ asset(path: 'images/logo.png') }}" class="logo">
     <nav>
         <ul class="nav-links">
-            <li class="nav-item {{ Request::is('/', '/*') ? 'active' : '' }}"><a href="/">Home</a></li>
             <li class="nav-item {{ Request::is('eksplorasi', '/eksplorasi*') ? 'active' : '' }}"><a
                     href="{{ route('eksplorasi.index') }}">Eksplorasi</a></li>
-            <li class="nav-item"><a href="#aboutme">Tentang Kami</a></li>
         </ul>
         <div class="auth">
             @guest

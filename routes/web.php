@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [App\Http\Controllers\LandingController::class, 'index'])->name('landing');
+Route::get('/', [App\Http\Controllers\ExplorationController::class, 'index'])->name('exploration');
 Route::resource('eksplorasi', App\Http\Controllers\ExplorationController::class)->except('create', 'edit', 'update', 'destroy');
 
 Auth::routes();
