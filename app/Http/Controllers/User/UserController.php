@@ -14,6 +14,10 @@ class UserController extends Controller
     {
         $profile = Auth::user();
 
+    if ($profile->role == 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
         return view('pages.edit-profile', compact('profile'));
     }
 
