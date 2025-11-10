@@ -42,7 +42,7 @@ class ArtworkController extends Controller
 
         try {
             // Simpan file gambar ke storage/app/public/artwork
-            $path = $request->file('image')->store('artwork', 'public');
+            $path = $request->file('image')->store('artworks', 'public');
 
             Artwork::create([
                 'user_id' => Auth::id(),
