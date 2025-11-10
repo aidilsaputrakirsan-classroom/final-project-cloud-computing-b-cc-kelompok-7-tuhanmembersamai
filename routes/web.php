@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ExplorationController;
 use App\Http\Controllers\User\UserController as ProfileController;
+use App\Http\Controllers\Admin\CategoryController;
+
 
 Route::get('/', [ExplorationController::class, 'index'])->name('exploration');
 Route::resource('eksplorasi', ExplorationController::class)->except(['create', 'edit', 'update', 'destroy']);
@@ -23,19 +25,29 @@ Route::middleware(['isLogin'])->group(function () {
 
 
 // === Area Admin ===
-Route::prefix('dashboard')->group(function () {
+Route::prefix('dashboard')->name('admin.')->group(function () {
+    // Dashboard utama
     Route::get('/', function () {
         return view('pages.admin.dashboard');
-    })->name('admin.dashboard');
+    })->name('dashboard');
 
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    // Manajemen User
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
+    // Post
     Route::get('/post', function () {
         return view('pages.admin.post');
-    })->name('admin.post');
+    })->name('post');
 
-    Route::get('/categories', function () {
-        return view('pages.admin.categories');
-    })->name('admin.categories');
+    // === CRUD Categories ===
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('/{id}', [CategoryController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
 });

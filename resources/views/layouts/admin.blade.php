@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - @yield('title')</title>
+   <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex">
@@ -24,9 +25,10 @@
                 <li class="px-4 py-2 hover:bg-blue-600">
                     <a href="{{ route('admin.post') }}">📝 Kelola Post</a>
                 </li>
-                <li class="px-4 py-2 hover:bg-blue-600">
-                    <a href="{{ route('admin.categories') }}">🗂️ Kelola Categories</a>
+               <li class="px-4 py-2 hover:bg-blue-600 {{ request()->routeIs('admin.categories.index') ? 'bg-blue-600' : '' }}">
+                    <a href="{{ route('admin.categories.index') }}">🗂️ Kelola Categories</a>
                 </li>
+
             </ul>
         </nav>
     </aside>
