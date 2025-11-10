@@ -1,12 +1,10 @@
 @extends('layouts.admin')
-@section('title', 'Kelola Post')
+@section('title','Kelola Post')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('assets/admin-posts.css') }}">
-
 <div class="card">
   <div class="card-header">
-    <h1>Daftar Post</h1>
+    <h2>Daftar Post</h2>
   </div>
 
   @if(session('success'))
@@ -27,28 +25,32 @@
         </tr>
       </thead>
       <tbody>
-        @forelse($posts as $post)
-          <tr>
-            <td>{{ $post->id }}</td>
-            <td>
-              <img src="{{ $post->image }}" alt="img-{{ $post->id }}" class="thumb">
-            </td>
-            <td class="desc">{{ Str::limit($post->description, 80) }}</td>
-            <td>{{ $post->category->name ?? '-' }}</td>
-            <td>{{ $post->user->name ?? '—' }}</td>
-            <td>{{ $post->created_at?->format('d/m/Y H:i') }}</td>
-            <td class="actions">
-              <a href="{{ route('admin.posts.show', $post) }}" class="btn btn-primary">View</a>
-              <a href="{{ route('admin.posts.edit', $post) }}" class="btn">Edit</a>
-              <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" onsubmit="return confirm('Hapus post ini?')" class="inline">
-                @csrf @method('DELETE')
-                <button class="btn btn-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
-        @empty
-          <tr><td colspan="7" class="empty">Belum ada post.</td></tr>
-        @endforelse
+      @forelse($posts as $p)
+        <tr>
+          <td>{{ $p->id }}</td>
+          <td>
+            @if($p->image)
+              <img src="{{ asset('storage/'.$p->image) }}" class="thumb" alt="img">
+            @else
+              <div class="thumb" style="display:grid;place-items:center;">–</div>
+            @endif
+          </td>
+          <td class="desc">{{ Str::limit($p->description, 80) }}</td>
+          <td>{{ $p->category->name ?? '-' }}</td>
+          <td>{{ $p->user->name ?? '-' }}</td>
+          <td>{{ $p->created_at?->format('d/m/Y H:i') }}</td>
+          <td class="gap-8">
+            <a class="btn btn-sm btn-primary" href="{{ route('admin.posts.show',$p) }}">View</a>
+            <a class="btn btn-sm" href="{{ route('admin.posts.edit',$p) }}">Edit</a>
+            <form action="{{ route('admin.posts.destroy',$p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus post ini?')">
+              @csrf @method('DELETE')
+              <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      @empty
+        <tr><td colspan="7" class="empty">Belum ada data.</td></tr>
+      @endforelse
       </tbody>
     </table>
   </div>

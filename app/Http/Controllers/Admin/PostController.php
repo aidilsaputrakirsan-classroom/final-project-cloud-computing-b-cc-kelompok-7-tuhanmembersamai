@@ -3,59 +3,85 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
+use App\Models\Artwork;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    // list & view-link
+    // List
     public function index()
     {
-        $posts = Post::with(['user','category'])
+        $posts = Artwork::with(['user','category'])
             ->latest()
             ->paginate(10);
 
         return view('pages.admin.posts.index', compact('posts'));
     }
 
-    // detail + comments
-    public function show(Post $post)
+    // Detail + comments
+    public function show(Artwork $artwork)
     {
-        $post->load(['user','category','comments.user']);
+        // eager-load comments + user
+        $artwork->load(['user','category','comments.user']);
+
+        // agar di blade variabelnya tetap $post
+        $post = $artwork;
         return view('pages.admin.posts.show', compact('post'));
     }
 
-    // form edit
-    public function edit(Post $post)
+    // Form edit
+    public function edit(Artwork $artwork)
     {
         $categories = Category::orderBy('name')->get();
+        $post = $artwork;
         return view('pages.admin.posts.edit', compact('post','categories'));
     }
 
-    // update data
-    public function update(Request $request, Post $post)
+    // Update
+    public function update(Request $request, Artwork $artwork)
     {
         $validated = $request->validate([
-            'category_id' => ['nullable','exists:categories,id'],
-            'image'       => ['required','string','max:255'],
+            'category_id' => ['required','integer','exists:categories,id'],
             'description' => ['nullable','string'],
+            'image'       => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
         ]);
 
-        $post->update($validated);
+        // upload image bila ada
+        if ($request->hasFile('image')) {
+            // simpan ke storage/app/public/artworks
+            $path = $request->file('image')->store('artworks', 'public');
+            $validated['image'] = $path;
+
+            // hapus file lama kalau ada
+            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
+                Storage::disk('public')->delete($artwork->image);
+            }
+        }
+
+        $artwork->update($validated);
 
         return redirect()
-            ->route('admin.posts.show', $post)
-            ->with('success', 'Post berhasil diperbarui.');
+            ->route('admin.posts.show', $artwork)
+            ->with('success', 'Post berhasil diupdate.');
     }
 
-    // hapus post (otomatis hapus comments jika FK cascade)
-    public function destroy(Post $post)
+    // Delete post
+    public function destroy(Artwork $artwork)
     {
-        $post->delete();
+        // hapus file image kalau ada
+        if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
+            Storage::disk('public')->delete($artwork->image);
+        }
+
+        // hapus child comments
+        $artwork->comments()->delete();
+
+        $artwork->delete();
 
         return redirect()
             ->route('admin.posts.index')
-            ->with('success', 'Post telah dihapus.');
+            ->with('success', 'Post berhasil dihapus.');
     }
 }

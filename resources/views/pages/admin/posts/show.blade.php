@@ -1,55 +1,52 @@
 @extends('layouts.admin')
-@section('title', 'Detail Post')
+@section('title','Detail Post')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('assets/admin-posts.css') }}">
+@if(session('success')) <div class="flash success">{{ session('success') }}</div> @endif
 
 <div class="card">
-  <div class="card-header flex-between">
-    <h1>Detail Post #{{ $post->id }}</h1>
-    <div class="gap-8">
-      <a href="{{ route('admin.posts.edit', $post) }}" class="btn">Edit</a>
-      <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" onsubmit="return confirm('Hapus post ini?')" class="inline">
-        @csrf @method('DELETE')
-        <button class="btn btn-danger">Delete Post</button>
-      </form>
-    </div>
-  </div>
-
-  @if(session('success'))
-    <div class="flash success">{{ session('success') }}</div>
-  @endif
-
   <div class="post-detail">
-    <div class="media">
-      <img src="{{ $post->image }}" class="hero" alt="post-img">
+    <div>
+      @if($post->image)
+        <img class="hero" src="{{ asset('storage/'.$post->image) }}" alt="">
+      @endif
     </div>
     <div class="meta">
-      <p><strong>Owner:</strong> {{ $post->user->name ?? '—' }}</p>
-      <p><strong>Kategori:</strong> {{ $post->category->name ?? '-' }}</p>
-      <p><strong>Dibuat:</strong> {{ $post->created_at?->format('d/m/Y H:i') }}</p>
-      <p><strong>Deskripsi:</strong><br>{{ $post->description ?? '-' }}</p>
+      <h2>#{{ $post->id }}</h2>
+      <p><b>Owner:</b> {{ $post->user->name ?? '-' }}</p>
+      <p><b>Kategori:</b> {{ $post->category->name ?? '-' }}</p>
+      <p><b>Dibuat:</b> {{ $post->created_at?->format('d/m/Y H:i') }}</p>
+      <p style="margin-top:8px">{{ $post->description }}</p>
+
+      <div class="flex-between" style="margin-top:12px">
+        <a class="btn" href="{{ route('admin.posts.edit',$post) }}">Edit</a>
+        <form action="{{ route('admin.posts.destroy',$post) }}" method="POST" onsubmit="return confirm('Hapus post ini?')">
+          @csrf @method('DELETE')
+          <button class="btn btn-danger">Delete</button>
+        </form>
+      </div>
     </div>
   </div>
+</div>
 
-  <hr>
+<div class="card" style="margin-top:14px">
+  <div class="card-header"><h3>Komentar</h3></div>
 
-  <h2>Komentar ({{ $post->comments->count() }})</h2>
   <div class="comments">
-    @forelse($post->comments as $comment)
+    @forelse($post->comments as $c)
       <div class="comment">
         <div class="comment-head">
-          <span class="author">{{ $comment->user->name ?? 'User' }}</span>
-          <span class="time">{{ $comment->created_at?->diffForHumans() }}</span>
+          <span>{{ $c->user->name ?? 'User' }}</span>
+          <small>{{ $c->created_at?->diffForHumans() }}</small>
         </div>
-        <div class="comment-body">{{ $comment->body }}</div>
-        <form action="{{ route('admin.comments.destroy', $comment) }}" method="POST" onsubmit="return confirm('Hapus komentar ini?')">
+        <div class="comment-body">{{ $c->body }}</div>
+        <form class="inline" action="{{ route('admin.comments.destroy', $c) }}" method="POST" onsubmit="return confirm('Hapus komentar ini?')">
           @csrf @method('DELETE')
-          <button class="btn btn-danger btn-sm">Delete Comment</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
         </form>
       </div>
     @empty
-      <p class="empty">Belum ada komentar.</p>
+      <div class="empty">Belum ada komentar.</div>
     @endforelse
   </div>
 </div>

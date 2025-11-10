@@ -9,6 +9,8 @@ class Artwork extends Model
 {
     use HasFactory;
 
+    protected $table = 'artworks';
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -18,11 +20,17 @@ class Artwork extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);   // FK: user_id
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class); // FK: category_id
+    }
+
+    public function comments()
+    {
+        // 👉 penting: FK di tabel comments = artwork_id
+        return $this->hasMany(Comment::class, 'artwork_id');
     }
 }
