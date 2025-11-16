@@ -61,17 +61,11 @@
 <div class="exploration-category mt-5 d-flex align-items-center">
     <div class="row">
         <div class="choice-chip-container d-flex flex-wrap justify-content-center">
-            <button class="choice-chip active">Digital Art</button>
-            <button class="choice-chip">Poster</button>
-            <button class="choice-chip">Web Design</button>
-            <button class="choice-chip">Wallpaper</button>
-            <button class="choice-chip">Kerajinan Tangan</button>
-            <button class="choice-chip">Ilustrasi</button>
-            <button class="choice-chip">Portofolio</button>
-            <button class="choice-chip">Typography</button>
-            <button class="choice-chip">PowerPoint</button>
-            <button class="choice-chip">Animasi</button>
-            <button class="choice-chip">Tanah Liat</button>
+            @foreach ($categories as $category)
+                <button class="choice-chip {{ $loop->first ? 'active' : '' }}" data-category="{{ $category->name }}">
+                    {{ $category->name }}
+                </button>
+            @endforeach
         </div>
     </div>
 </div>
@@ -85,7 +79,7 @@
              data-description="{{ Str::lower($artwork->description ?? '') }}"
              data-category="{{ Str::lower($artwork->category ?? '') }}">
             <a href="{{ route('eksplorasi.show', $artwork->id) }}">
-                <img src="{{ asset('storage/artwork/' . $artwork->image) }}" alt="Illustration" class="img-fluid">
+                <img src="{{ asset('storage/' . $artwork->image) }}" alt="Illustration" class="img-fluid">
             </a>
             <div class="author-info gap-2">
                 @if ($artwork->user->image)
@@ -111,7 +105,7 @@
 <script>
 $(function() {
     // base URLs dari Blade (dipakai saat buat kartu dinamis via JS)
-    const baseArtworkUrl = "{{ asset('storage/artwork/') }}";
+    const baseArtworkUrl = "{{ asset('storage/') }}";
     const baseUserUrl = "{{ asset('storage/user/') }}";
     const defaultProfile = "{{ asset('images/default-profile.png') }}";
 
@@ -241,7 +235,7 @@ $(function() {
     $('.choice-chip').click(function() {
         $('.choice-chip').removeClass('active');
         $(this).addClass('active');
-        var category = $(this).text();
+        var category = $(this).data('category');
 
         $.ajax({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExplorationController;
+use App\Http\Controllers\HomePageController;
 
 Route::get('/', [App\Http\Controllers\ExplorationController::class, 'index'])->name('exploration');
 Route::resource('eksplorasi', App\Http\Controllers\ExplorationController::class)->except('create', 'edit', 'update', 'destroy');
@@ -23,3 +24,8 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/exploration/{id}', [\App\Http\Controllers\ExplorationController::class, 'show'])->name('exploration.show');
     Route::get('/notifications', [ExplorationController::class, 'notifications'])->name('notifications.index');
 });
+
+
+// Home page routes
+Route::get('/home', [App\Http\Controllers\HomePageController::class, 'index'])->name('home');
+Route::post('/home/search', [App\Http\Controllers\HomePageController::class, 'search']);

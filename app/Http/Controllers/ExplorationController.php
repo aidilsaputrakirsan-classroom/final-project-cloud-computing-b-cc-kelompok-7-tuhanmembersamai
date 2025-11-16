@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artwork;
+use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Like;
 use Exception;
@@ -16,9 +17,10 @@ class ExplorationController extends Controller
      */
     public function index()
     {
+        $categories = Category::all();
         $artworks = Artwork::with('user', 'category')
-            ->select('id', 'image', 'description', 'user_id')
-            ->where('category_id', 1)
+            ->select('id', 'image', 'description', 'user_id', 'category_id')
+            ->where('category_id', $categories->first()?->id ?? 1)
             ->get();
 
         // Notifikasi
@@ -30,7 +32,7 @@ class ExplorationController extends Controller
                     + Comment::whereIn('artwork_id', $userArtworks)->count();
         }
 
-        return view('pages.exploration', compact('artworks', 'notif'));
+        return view('pages.exploration', compact('artworks', 'notif', 'categories'));
     }
 
     public function store(Request $request)
