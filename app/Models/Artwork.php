@@ -33,4 +33,15 @@ class Artwork extends Model
         // 👉 penting: FK di tabel comments = artwork_id
         return $this->hasMany(Comment::class, 'artwork_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }

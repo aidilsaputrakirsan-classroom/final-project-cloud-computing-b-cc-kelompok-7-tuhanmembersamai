@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExplorationController;
+use App\Http\Controllers\HomePageController;
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ExplorationController;
@@ -23,6 +25,7 @@ Auth::routes();
 //      USER
 // ========================
 Route::middleware(['isLogin'])->group(function () {
+<<<<<<< HEAD
     Route::post('eksplorasi/like/{id}', [ExplorationController::class, 'like'])->name('eksplorasi.like');
     Route::post('eksplorasi/comment/{id}', [ExplorationController::class, 'comment'])->name('eksplorasi.comment');
 
@@ -70,4 +73,23 @@ Route::prefix('dashboard')->name('admin.')->group(function () {
         Route::put('/{id}',       [CategoryController::class, 'update'])->name('update');
         Route::delete('/{id}',    [CategoryController::class, 'destroy'])->name('destroy');
     });
+=======
+    Route::post('eksplorasi/like/{id}', [App\Http\Controllers\ExplorationController::class, 'like'])->name('eksplorasi.like');
+    Route::post('eksplorasi/comment/{id}', [App\Http\Controllers\ExplorationController::class, 'comment'])->name('eksplorasi.comment');
+    Route::post('/exploration/{id}/like', [\App\Http\Controllers\ExplorationController::class, 'like'])->name('exploration.like');
+    Route::post('/exploration/{id}/comment', [\App\Http\Controllers\ExplorationController::class, 'comment'])->name('exploration.comment');
+
+    Route::resource('profile', App\Http\Controllers\User\ArtworkController::class)->except('create', 'show', 'edit', 'update');
+    Route::get('user/edit-profile', [App\Http\Controllers\User\UserController::class, 'index'])->name('edit.profile');
+    Route::put('user/update', [App\Http\Controllers\User\UserController::class, 'update'])->name('update.profile');
+    Route::put('user/update-photo', [App\Http\Controllers\User\UserController::class, 'updateProfile'])->name('update.profile.photo');
+    Route::get('notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/exploration/{id}', [\App\Http\Controllers\ExplorationController::class, 'show'])->name('exploration.show');
+    Route::get('/notifications', [ExplorationController::class, 'notifications'])->name('notifications.index');
+>>>>>>> feature/notification
 });
+
+
+// Home page routes
+Route::get('/home', [App\Http\Controllers\HomePageController::class, 'index'])->name('home');
+Route::post('/home/search', [App\Http\Controllers\HomePageController::class, 'search']);

@@ -1,10 +1,25 @@
 <header>
-    <img src="{{ asset(path: 'images/logo.png') }}" class="logo">
+    <img src="{{ asset('images/logo.png') }}" class="logo">
     <nav>
         <ul class="nav-links">
-            <li class="nav-item {{ Request::is('eksplorasi', '/eksplorasi*') ? 'active' : '' }}"><a
-                    href="{{ route('eksplorasi.index') }}">Eksplorasi</a></li>
+            <li class="nav-item {{ Request::is('eksplorasi', '/eksplorasi*') ? 'active' : '' }}">
+                <a href="{{ route('eksplorasi.index') }}">Eksplorasi</a>
+            </li>
+
+            @auth
+                @php
+                    $countNotif = \App\Models\Like::whereHas('artwork', fn($q) => $q->where('user_id', Auth::id()))->count()
+                                + \App\Models\Comment::whereHas('artwork', fn($q) => $q->where('user_id', Auth::id()))->count();
+                @endphp
+
+                <li class="nav-item {{ Request::is('notifications') ? 'active' : '' }}">
+                    <a href="{{ route('notifications.index') }}">
+                        Notifikasi ({{ $countNotif }})
+                    </a>
+                </li>
+            @endauth
         </ul>
+
         <div class="auth">
             @guest
                 <a href="{{ route('register') }}" class="btn-register">Daftar</a>
@@ -33,7 +48,7 @@
                         </div>
                         <div class="menu mt-2">
                             <a href="{{ route('profile.index') }}">Profil</a>
-                            <!-- <a href="#">Unggah Karya</a> -->
+
                             <a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 keluar

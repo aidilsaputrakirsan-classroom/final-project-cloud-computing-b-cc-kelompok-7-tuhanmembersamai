@@ -15,13 +15,13 @@ class Comment extends Model
         'body',
     ];
 
-    public function artwork()
-    {
-        return $this->belongsTo(Artwork::class, 'artwork_id');
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function artwork()
+    {
+        return $this->belongsTo(Artwork::class);
     }
 }
