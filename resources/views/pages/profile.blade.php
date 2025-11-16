@@ -6,7 +6,7 @@
                 class="back"></a>
         <div class="profile-info">
             @if ($profile->image)
-                <img src="{{ asset('storage/user/' . $profile->image) }}" alt="profile">
+                <img src="{{ asset('storage/' . $profile->image) }}" alt="profile">
             @else
                 <img src="{{ asset('images/default-profile.png') }}" alt="profile">
             @endif
@@ -53,7 +53,7 @@
                                         @forelse ($artworks as $artwork)
                                             <tr>
                                                 <th scope="row">{{ $no++ }}</th>
-                                                <td><img src="{{ asset('storage/artwork/' . $artwork->image) }}"
+                                                <td><img src="{{ asset('storage/' . $artwork->image) }}"
                                                         alt="artwork" width="50px"></td>
                                                 <td class="description">{{ $artwork->description }}</td>
                                                 <td>{{ $artwork->category->name }}</td>
@@ -107,7 +107,7 @@
             <div class="artwork-content">
                 @forelse ($artworks as $artwork)
                     <div class="card-artwork">
-                        <img src="{{ asset('storage/artwork/' . $artwork->image) }}" alt="artwork">
+                        <img src="{{ asset('storage/' . $artwork->image) }}" alt="artwork">
                     </div>
                 @empty
                     <p>Tidak Ada Karya</p>

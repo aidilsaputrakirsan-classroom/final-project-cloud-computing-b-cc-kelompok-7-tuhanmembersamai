@@ -39,7 +39,7 @@
           <span>{{ $c->user->name ?? 'User' }}</span>
           <small>{{ $c->created_at?->diffForHumans() }}</small>
         </div>
-        <div class="comment-body">{{ $c->body }}</div>
+        <div class="comment-body">{{ $c->message }}</div>
         <form class="inline" action="{{ route('admin.comments.destroy', $c) }}" method="POST" onsubmit="return confirm('Hapus komentar ini?')">
           @csrf @method('DELETE')
           <button class="btn btn-sm btn-danger">Delete</button>

@@ -12,16 +12,16 @@ class Comment extends Model
     protected $fillable = [
         'artwork_id',
         'user_id',
-        'body',
+        'message',
     ];
-
-    public function artwork()
-    {
-        return $this->belongsTo(Artwork::class, 'artwork_id');
-    }
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function artwork()
+    {
+        return $this->belongsTo(Artwork::class);
     }
 }

@@ -19,7 +19,7 @@
                     <!-- <a href="#">kunjungi profil</a> -->
                 </div>
                 <div class="artwork mt-1">
-                    <img src="{{ asset('storage/artwork/' . $data->image) }}" alt="Illustration" class="img-fluid">
+                    <img src="{{ asset('storage/' . $data->image) }}" alt="Illustration" class="img-fluid">
                 </div>
             </div>
             <div class="content-right col-lg-6">
