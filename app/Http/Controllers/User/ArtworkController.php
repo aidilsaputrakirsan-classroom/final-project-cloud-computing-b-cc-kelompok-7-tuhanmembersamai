@@ -41,14 +41,16 @@ class ArtworkController extends Controller
         ]);
 
         try {
-            // Simpan file gambar ke storage/app/public/artwork
-            $path = $request->file('image')->store('artworks', 'public');
 
+            // Upload ke Supabase Storage
+            $path = Storage::disk('supabase')->put('artworks', $request->file('image'));
+
+            // Simpan ke database
             Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
-                'image' => $path, // simpan path lengkap, contoh: artwork/abcd123.jpg
+                'image' => $path, // contoh: artworks/filenamexyz.jpg
             ]);
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
@@ -65,12 +67,12 @@ class ArtworkController extends Controller
         try {
             $artwork = Artwork::findOrFail($id);
 
-            // Hapus file gambar dari storage
-            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
-                Storage::disk('public')->delete($artwork->image);
+            // Hapus file gambar dari Supabase
+            if ($artwork->image && Storage::disk('supabase')->exists($artwork->image)) {
+                Storage::disk('supabase')->delete($artwork->image);
             }
 
-            // Hapus record dari database
+            // Hapus record database
             $artwork->delete();
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil dihapus!');
