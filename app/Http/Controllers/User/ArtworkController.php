@@ -9,9 +9,17 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\SupabaseStorageService;
 
 class ArtworkController extends Controller
 {
+    protected $supabaseStorageService;
+
+    public function __construct()
+    {
+        $this->supabaseStorageService = new SupabaseStorageService();
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -41,19 +49,22 @@ class ArtworkController extends Controller
         ]);
 
         try {
-            // Simpan file gambar ke storage/app/public/artwork
-            $path = $request->file('image')->store('artworks', 'public');
+            $file = $request->file('image');
+            $filename = uniqid() . '_' . $file->getClientOriginalName();
+
+            // Upload file to Supabase Storage bucket "artworks"
+            $publicUrl = $this->supabaseStorageService->upload($file, $filename);
 
             Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
-                'image' => $path, // simpan path lengkap, contoh: artwork/abcd123.jpg
+                'image' => $publicUrl, // simpan URL public dari Supabase
             ]);
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
         } catch (Exception $e) {
-            return redirect()->route('profile.index')->with('error', 'Artwork gagal ditambahkan!');
+            return redirect()->route('profile.index')->with('error', 'Artwork gagal ditambahkan! ' . $e->getMessage());
         }
     }
 
@@ -65,10 +76,8 @@ class ArtworkController extends Controller
         try {
             $artwork = Artwork::findOrFail($id);
 
-            // Hapus file gambar dari storage
-            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
-                Storage::disk('public')->delete($artwork->image);
-            }
+            // Currently the images are on Supabase, consider deleting from Supabase if needed
+            // This example will not delete from Supabase storage automatically
 
             // Hapus record dari database
             $artwork->delete();
