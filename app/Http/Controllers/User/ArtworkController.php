@@ -49,11 +49,8 @@ class ArtworkController extends Controller
         ]);
 
         try {
-            $file = $request->file('image');
-            $filename = uniqid() . '_' . $file->getClientOriginalName();
-
-            // Upload file to Supabase Storage bucket "artworks"
-            $publicUrl = $this->supabaseStorageService->upload($file, $filename);
+            // Simpan file gambar ke storage/app/public/artwork
+            $path = $request->file('image')->store('artworks', 'public');
 
             Artwork::create([
                 'user_id' => Auth::id(),
@@ -76,10 +73,12 @@ class ArtworkController extends Controller
         try {
             $artwork = Artwork::findOrFail($id);
 
-            // Currently the images are on Supabase, consider deleting from Supabase if needed
-            // This example will not delete from Supabase storage automatically
+            // Hapus file gambar dari storage
+            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
+                Storage::disk('public')->delete($artwork->image);
+            }
 
-            // Hapus record dari database
+            // Hapus record database
             $artwork->delete();
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil dihapus!');
