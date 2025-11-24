@@ -77,7 +77,7 @@
              data-description="{{ Str::lower($artwork->description ?? '') }}"
              data-category="{{ Str::lower(optional($artwork->category)->name ?? '') }}">
             <a href="{{ route('eksplorasi.show', $artwork->id) }}">
-                <img src="{{ asset('storage/' . $artwork->image) }}" alt="Illustration" class="img-fluid">
+                <img src="{{ $artwork->image }}" alt="Illustration" class="img-fluid">
             </a>
 
             <div class="author-info gap-2">
@@ -179,7 +179,7 @@ $(function() {
                 if (response.length > 0) {
                     $.each(response, function(index, artwork) {
                         // gunakan baseArtworkUrl / baseUserUrl dari atas
-                        const artworkImg = artwork.image ? `${baseArtworkUrl}/${artwork.image}` : '';
+                        const artworkImg = artwork.image;
                         const userImg = (artwork.user && artwork.user.image) ? `${baseUserUrl}/${artwork.user.image}` : defaultProfile;
                         const authorName = (artwork.user && artwork.user.name) ? artwork.user.name : 'Unknown User';
                         const descShort = artwork.description ? (artwork.description.length > 10 ? artwork.description.slice(0,10) + '...' : artwork.description) : '';
