@@ -8,7 +8,6 @@ use App\Models\Category;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Services\SupabaseStorageService;
 
 class ArtworkController extends Controller
@@ -20,9 +19,6 @@ class ArtworkController extends Controller
         $this->supabaseStorageService = new SupabaseStorageService();
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user_id = Auth::id();
@@ -37,9 +33,6 @@ class ArtworkController extends Controller
         return view('pages.profile', compact('artworks', 'categories', 'profile'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -49,36 +42,36 @@ class ArtworkController extends Controller
         ]);
 
         try {
-            // Simpan file gambar ke storage/app/public/artwork
-            $path = $request->file('image')->store('artworks', 'public');
+            // file untuk Supabase
+            $file = $request->file('image');
+            $filename = uniqid() . '_' . $file->getClientOriginalName();
 
+            // upload ke Supabase
+            $publicUrl = $this->supabaseStorageService->upload($file, $filename);
+
+            // simpan ke DB
             Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
-                'image' => $publicUrl, // simpan URL public dari Supabase
+                'image' => $publicUrl,  // URL Supabase
             ]);
 
-            return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
+            return redirect()->route('profile.index')
+                ->with('success', 'Artwork berhasil ditambahkan!');
+
         } catch (Exception $e) {
-            return redirect()->route('profile.index')->with('error', 'Artwork gagal ditambahkan! ' . $e->getMessage());
+            return redirect()->route('profile.index')
+                ->with('error', 'Artwork gagal ditambahkan! ' . $e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         try {
             $artwork = Artwork::findOrFail($id);
 
-            // Hapus file gambar dari storage
-            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
-                Storage::disk('public')->delete($artwork->image);
-            }
-
-            // Hapus record database
+            // Tidak menghapus dari Supabase (jika mau, nanti saya buatkan)
             $artwork->delete();
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil dihapus!');

@@ -22,7 +22,7 @@ class SupabaseStorageService
         $fileContent = file_get_contents($file->getRealPath());
 
         $response = Http::withOptions([
-                'verify' => false    // 🔥 FIX SSL ERROR
+                'verify' => false // 🔥 FIX SSL ERROR
             ])
             ->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -32,14 +32,14 @@ class SupabaseStorageService
             ->withBody($fileContent, $file->getMimeType())
             ->post("{$this->projectUrl}/storage/v1/object/{$this->bucket}/$path");
 
-
         if (!$response->successful()) {
-
-            $safeMessage = $response->json('message')
-                ?? "HTTP " . $response->status();
-
+            $safeMessage = $response->json('message') ?? "HTTP " . $response->status();
             throw new \Exception("Upload gagal: " . $safeMessage);
         }
-        return "{$this->projectUrl}/storage/v1/object/public/{$this->bucket}/$path";
+
+        // 🔥 Penting: variabel tidak boleh undefined
+        $publicUrl = "{$this->projectUrl}/storage/v1/object/public/{$this->bucket}/$path";
+
+        return $publicUrl;
     }
 }
