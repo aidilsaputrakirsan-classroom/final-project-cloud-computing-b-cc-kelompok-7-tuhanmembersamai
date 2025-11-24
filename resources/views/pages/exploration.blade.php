@@ -106,8 +106,6 @@
 <script>
 $(function() {
 
-    // BASE URL Supabase
-    const SUPABASE_URL = "https://ejxrzekncqjgkpclools.supabase.co/storage/v1/object/public/";
 
     // === Suggestions setup ===
     let suggestions = [];
@@ -219,7 +217,7 @@ $(function() {
 
                 if (response.length > 0) {
                     $.each(response, function(index, artwork) {
-                        const artworkImg = `${SUPABASE_URL}${artwork.image}`;
+                        const artworkImg = artwork.image;
                         const userImg = "{{ asset('images/default-profile.png') }}";
 
                         const card = `
