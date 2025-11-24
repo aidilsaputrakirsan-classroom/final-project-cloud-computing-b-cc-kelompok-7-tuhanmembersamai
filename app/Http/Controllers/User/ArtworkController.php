@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Artwork;
 use App\Models\Category;
+use App\Models\Like;
+use App\Models\Comment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +25,13 @@ class ArtworkController extends Controller
             ->select('id', 'image', 'description', 'category_id')
             ->get();
 
+        // Add like and comment counts untuk setiap artwork
+        $artworks = $artworks->map(function($artwork) {
+            $artwork->likes_count = Like::where('artwork_id', $artwork->id)->count();
+            $artwork->comments_count = Comment::where('artwork_id', $artwork->id)->count();
+            return $artwork;
+        });
+
         $categories = Category::select('id', 'name')->get();
         $profile = Auth::user();
 
@@ -40,15 +49,19 @@ class ArtworkController extends Controller
             'image' => 'required|image|mimes:png,jpg,jpeg|max:5048',
         ]);
 
+
         try {
-            // Simpan file gambar ke storage/app/public/artwork
-            $path = $request->file('image')->store('artworks', 'public');
+            // gunakan disk sesuai konfigurasi env FILESYSTEM_DISK (default 'public' untuk dev)
+            $disk = env('FILESYSTEM_DISK', 'public');
+
+            // Simpan file gambar ke disk (mis: public atau s3)
+            $path = $request->file('image')->store('artworks', $disk);
 
             Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
-                'image' => $path, // simpan path lengkap, contoh: artwork/abcd123.jpg
+                'image' => $path, // simpan path lengkap, contoh: artworks/abcd123.jpg
             ]);
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
@@ -66,8 +79,9 @@ class ArtworkController extends Controller
             $artwork = Artwork::findOrFail($id);
 
             // Hapus file gambar dari storage
-            if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
-                Storage::disk('public')->delete($artwork->image);
+            $disk = env('FILESYSTEM_DISK', 'public');
+            if ($artwork->image && Storage::disk($disk)->exists($artwork->image)) {
+                Storage::disk($disk)->delete($artwork->image);
             }
 
             // Hapus record dari database

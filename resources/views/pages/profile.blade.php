@@ -6,7 +6,7 @@
                 class="back"></a>
         <div class="profile-info">
             @if ($profile->image)
-                <img src="{{ asset('storage/' . $profile->image) }}" alt="profile">
+                <img src="{{ Storage::url($profile->image) }}" alt="profile">
             @else
                 <img src="{{ asset('images/default-profile.png') }}" alt="profile">
             @endif
@@ -53,8 +53,8 @@
                                         @forelse ($artworks as $artwork)
                                             <tr>
                                                 <th scope="row">{{ $no++ }}</th>
-                                                <td><img src="{{ asset('storage/' . $artwork->image) }}"
-                                                        alt="artwork" width="50px"></td>
+                                                <td><img src="{{ Storage::url($artwork->image) }}"
+                                                    alt="artwork" width="50px"></td>
                                                 <td class="description">{{ $artwork->description }}</td>
                                                 <td>{{ $artwork->category->name }}</td>
                                                 <td>
@@ -107,7 +107,16 @@
             <div class="artwork-content">
                 @forelse ($artworks as $artwork)
                     <div class="card-artwork">
-                        <img src="{{ asset('storage/' . $artwork->image) }}" alt="artwork">
+                        <img src="{{ Storage::url($artwork->image) }}" alt="artwork">
+                        <div class="artwork-stats" style="padding: 12px; background: #fff; border-top: 1px solid #f0f0f0;">
+                            <p style="margin: 0; font-size: 14px; color: #666; word-wrap: break-word; overflow-wrap: break-word;">
+                                <strong>{{ $artwork->description }}</strong>
+                            </p>
+                            <div style="display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #999;">
+                                <span>❤️ {{ $artwork->likes_count }} likes</span>
+                                <span>💬 {{ $artwork->comments_count }} komentar</span>
+                            </div>
+                        </div>
                     </div>
                 @empty
                     <p>Tidak Ada Karya</p>
