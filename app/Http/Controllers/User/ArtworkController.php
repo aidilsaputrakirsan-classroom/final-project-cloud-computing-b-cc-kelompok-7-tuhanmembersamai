@@ -40,17 +40,15 @@ class ArtworkController extends Controller
             'image' => 'required|image|mimes:png,jpg,jpeg|max:5048',
         ]);
 
-        try {
+try {
+            // Simpan file gambar ke storage/app/public/artwork
+            $path = $request->file('image')->store('artworks', 'public');
 
-            // Upload ke Supabase Storage
-            $path = Storage::disk('supabase')->put('artworks', $request->file('image'));
-
-            // Simpan ke database
             Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
-                'image' => $path, // contoh: artworks/filenamexyz.jpg
+                'image' => $path, // simpan path lengkap, contoh: artwork/abcd123.jpg
             ]);
 
             return redirect()->route('profile.index')->with('success', 'Artwork berhasil ditambahkan!');
