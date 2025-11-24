@@ -24,6 +24,8 @@
     {{-- Navbar --}}
     @include('partials.header')
 
+
+
     <section>
         @yield('section')
     </section>
