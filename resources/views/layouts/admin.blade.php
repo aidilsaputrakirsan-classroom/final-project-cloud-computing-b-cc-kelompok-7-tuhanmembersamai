@@ -28,6 +28,9 @@
                <li class="px-4 py-2 hover:bg-blue-600 {{ request()->routeIs('admin.categories.index') ? 'bg-blue-600' : '' }}">
                     <a href="{{ route('admin.categories.index') }}">🗂️ Kelola Categories</a>
                 </li>
+                <li class="px-4 py-2 hover:bg-blue-600 {{ request()->routeIs('admin.activity-logs.*') ? 'bg-blue-600' : '' }}">
+                    <a href="{{ route('admin.activity-logs.index') }}">📊 Activity Log</a>
+                </li>
 
             </ul>
         </nav>

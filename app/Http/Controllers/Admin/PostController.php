@@ -7,6 +7,7 @@ use App\Models\Artwork;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -62,6 +63,9 @@ class PostController extends Controller
 
         $artwork->update($validated);
 
+        // Log activity
+        addLog(Auth::id(), 'admin_edit_post', 'Admin update post karya dari user ' . $artwork->user->name);
+
         return redirect()
             ->route('admin.posts.show', $artwork)
             ->with('success', 'Post berhasil diupdate.');
@@ -77,6 +81,9 @@ class PostController extends Controller
 
         // hapus child comments
         $artwork->comments()->delete();
+
+        // Log activity
+        addLog(Auth::id(), 'admin_delete_post', 'Admin menghapus post karya dari user ' . $artwork->user->name);
 
         $artwork->delete();
 
