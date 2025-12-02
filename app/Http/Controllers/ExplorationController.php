@@ -68,11 +68,17 @@ class ExplorationController extends Controller
             return response()->json([]);
         }
 
+        // Log activity if user is authenticated
+        if (Auth::check()) {
+            addLog(Auth::id(), 'search', 'User searched for: ' . $query);
+        }
+
+        // Case-insensitive search using ILIKE (PostgreSQL)
         $artworks = Artwork::with('user')
             ->whereHas('category', function ($q) use ($query) {
-                $q->where('name', 'like', '%' . $query . '%');
+                $q->whereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $query . '%']);
             })
-            ->orWhere('description', 'like', '%' . $query . '%')
+            ->orWhereRaw('LOWER(description) LIKE LOWER(?)', ['%' . $query . '%'])
             ->select('id', 'image', 'description', 'user_id')
             ->get();
 

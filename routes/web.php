@@ -21,6 +21,8 @@ Route::get('/', [ExplorationController::class, 'index'])->name('exploration');
 Route::resource('eksplorasi', ExplorationController::class)
     ->except(['create', 'edit', 'update', 'destroy']);
 
+Route::post('/eksplorasi/search', [ExplorationController::class, 'search'])->name('eksplorasi.search');
+
 Auth::routes();
 
 // ========================
