@@ -68,11 +68,17 @@ class ExplorationController extends Controller
             return response()->json([]);
         }
 
+        // Log activity if user is authenticated
+        if (Auth::check()) {
+            addLog(Auth::id(), 'search', 'User searched for: ' . $query);
+        }
+
+        // Case-insensitive search using ILIKE (PostgreSQL)
         $artworks = Artwork::with('user')
             ->whereHas('category', function ($q) use ($query) {
-                $q->where('name', 'like', '%' . $query . '%');
+                $q->whereRaw('LOWER(name) LIKE LOWER(?)', ['%' . $query . '%']);
             })
-            ->orWhere('description', 'like', '%' . $query . '%')
+            ->orWhereRaw('LOWER(description) LIKE LOWER(?)', ['%' . $query . '%'])
             ->select('id', 'image', 'description', 'user_id')
             ->get();
 
@@ -151,11 +157,15 @@ class ExplorationController extends Controller
 
         if ($like) {
             $like->delete();
+            // Log activity
+            addLog($user_id, 'unlike_artwork', 'User unlike artwork ID: ' . $id);
         } else {
             Like::create([
                 'user_id' => $user_id,
                 'artwork_id' => $id,
             ]);
+            // Log activity
+            addLog($user_id, 'like_artwork', 'User like artwork ID: ' . $id);
         }
 
         $like_count = Like::where('artwork_id', $id)->count();
@@ -180,6 +190,9 @@ class ExplorationController extends Controller
             'artwork_id' => $id,
             'message' => $request->input('message'),
         ]);
+
+        // Log activity
+        addLog(Auth::id(), 'comment_artwork', 'User berkomentar pada artwork ID: ' . $id);
 
         return redirect()->back()->with('success', 'Comment has been sent');
     }

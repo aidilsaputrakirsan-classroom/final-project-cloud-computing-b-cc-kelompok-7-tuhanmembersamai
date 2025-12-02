@@ -37,6 +37,9 @@ class UserController extends Controller
 
             $profile->update($data);
 
+            // Log activity
+            addLog($user_id, 'update_profile', 'User update data profil');
+
             return redirect()->route('profile.index')->with('success', 'Profile berhasil diupdate!!');
         } catch (Exception $e) {
             return redirect()->route('profile.index')->with('error', 'Profile Gagal diupdate!!');
@@ -61,6 +64,9 @@ class UserController extends Controller
             $data['image'] = $image->hashName();
 
             $profile->update($data);
+
+            // Log activity
+            addLog($user_id, 'update_profile_photo', 'User update foto profil');
 
             return redirect()->route('profile.index')->with('success', 'Photo Profile berhasil diupdate!!');
         } catch (Exception $e) {

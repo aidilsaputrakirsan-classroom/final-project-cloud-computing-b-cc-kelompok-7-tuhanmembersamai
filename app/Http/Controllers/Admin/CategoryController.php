@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -78,6 +79,9 @@ class CategoryController extends Controller
             logger()->error('Supabase category store exception: ' . $e->getMessage());
             return redirect()->route('admin.categories.index')->with('error', 'Gagal menambahkan kategori: ' . $e->getMessage());
         }
+
+        // Log activity
+        addLog(Auth::id(), 'admin_create_category', 'Admin membuat kategori baru: ' . $request->name);
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan!');
     }
@@ -177,6 +181,9 @@ class CategoryController extends Controller
             return redirect()->route('admin.categories.index')->with('error', 'Gagal memperbarui kategori: ' . $e->getMessage());
         }
 
+        // Log activity
+        addLog(Auth::id(), 'admin_update_category', 'Admin update kategori: ' . $request->name);
+
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui!');
     }
 
@@ -202,6 +209,9 @@ class CategoryController extends Controller
             logger()->error('Supabase category destroy exception: ' . $e->getMessage());
             return redirect()->route('admin.categories.index')->with('error', 'Gagal menghapus kategori: ' . $e->getMessage());
         }
+
+        // Log activity
+        addLog(Auth::id(), 'admin_delete_category', 'Admin menghapus kategori dengan ID: ' . $id);
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus!');
     }

@@ -243,12 +243,12 @@
                         <span>Like</span>
                     </div>
                     <span class="notif-pill">
-                        {{ $likeNotif->count() }} aktivitas
+                        {{ $likes->count() }} aktivitas
                     </span>
                 </div>
 
                 <div class="notif-list">
-                    @forelse ($likeNotif as $notif)
+                    @forelse ($likes as $notif)
                         <div class="notif-item notif-like">
                             <div class="notif-avatar">
                                 <i class="fa fa-heart"></i>
@@ -279,12 +279,12 @@
                         <span>Komentar</span>
                     </div>
                     <span class="notif-pill">
-                        {{ $commentNotif->count() }} aktivitas
+                        {{ $comments->count() }} aktivitas
                     </span>
                 </div>
 
                 <div class="notif-list">
-                    @forelse ($commentNotif as $notif)
+                    @forelse ($comments as $notif)
                         <div class="notif-item notif-comment">
                             <div class="notif-avatar">
                                 <i class="fa fa-comment"></i>

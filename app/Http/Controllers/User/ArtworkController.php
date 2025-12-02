@@ -50,12 +50,15 @@ class ArtworkController extends Controller
             $publicUrl = $this->supabaseStorageService->upload($file, $filename);
 
             // simpan ke DB
-            Artwork::create([
+            $artwork = Artwork::create([
                 'user_id' => Auth::id(),
                 'category_id' => $request->category_id,
                 'description' => $request->description,
                 'image' => $publicUrl,  // URL Supabase
             ]);
+
+            // Log activity
+            addLog(Auth::id(), 'upload_artwork', 'User upload artwork dengan deskripsi: ' . substr($request->description, 0, 50));
 
             return redirect()->route('profile.index')
                 ->with('success', 'Artwork berhasil ditambahkan!');
@@ -70,6 +73,9 @@ class ArtworkController extends Controller
     {
         try {
             $artwork = Artwork::findOrFail($id);
+
+            // Log activity
+            addLog(Auth::id(), 'delete_artwork', 'User menghapus artwork dengan deskripsi: ' . substr($artwork->description, 0, 50));
 
             // Tidak menghapus dari Supabase (jika mau, nanti saya buatkan)
             $artwork->delete();

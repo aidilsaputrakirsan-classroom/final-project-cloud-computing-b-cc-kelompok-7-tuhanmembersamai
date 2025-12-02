@@ -582,7 +582,9 @@ footer .footer-content .social p {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    width: 470px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 16px;
 }
 
 .detail-exploration .content-left .author-info .name {
@@ -611,14 +613,14 @@ footer .footer-content .social p {
 }
 
 .detail-exploration .content-left .artwork {
-    width: 470px;
-    height: 625px;
+    width: 100%;
+    max-width: 700px;
 }
 
 .detail-exploration .content-left .artwork img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
     border-radius: 8px;
 }
 
@@ -630,7 +632,8 @@ footer .footer-content .social p {
 }
 
 .detail-exploration .content-right .description {
-    width: 450px;
+    width: 100%;
+    max-width: 600px;
     padding: 20px;
     border: 1px solid var(--text-color);
     border-radius: 10px;
@@ -642,7 +645,8 @@ footer .footer-content .social p {
     align-items: center;
     justify-content: end;
     margin: 8px 0 8px 0;
-    width: 450px;
+    width: 100%;
+    max-width: 600px;
 }
 
 .detail-exploration .content-right .like-comment .like,
@@ -675,7 +679,8 @@ footer .footer-content .social p {
 
 .detail-exploration .content-right .list-comment {
     display: flex;
-    width: 450px;
+    width: 100%;
+    max-width: 600px;
     flex-direction: column;
     border-radius: 8px;
     border: 1px solid var(--text-color);
@@ -687,8 +692,9 @@ footer .footer-content .social p {
     display: flex;
     align-items: end;
     justify-content: end;
-    margin-right: 8px;
-    width: 450px;
+    margin-right: 0;
+    width: 100%;
+    max-width: 600px;
 }
 
 .textarea-hidden {
