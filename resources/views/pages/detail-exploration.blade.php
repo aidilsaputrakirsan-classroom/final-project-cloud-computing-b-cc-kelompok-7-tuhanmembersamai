@@ -77,7 +77,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            id = {{ $data->id }};
+            const id = "{{ $data->id }}";
+
+            // Like / Unlike handlers
             $('#likeButton').click(function() {
                 $.ajax({
                     url: `/eksplorasi/like/${id}`,
@@ -112,6 +114,49 @@
                         console.log(xhr.responseText);
                     }
                 });
+            });
+
+            // Adjust artwork image: if the natural width is smaller than the container,
+            // upscale it to fill the container's width (respecting max-width from CSS).
+            function adjustArtworkImage() {
+                const $img = $('.detail-exploration .artwork img');
+                const $container = $('.detail-exploration .content-left .artwork');
+                if (!$img.length || !$container.length) return;
+
+                const imgEl = $img[0];
+
+                function doAdjust() {
+                    const naturalW = imgEl.naturalWidth || 0;
+                    const containerW = $container.innerWidth();
+
+                    // If image natural width is smaller than container, allow upscaling.
+                    if (naturalW > 0 && naturalW < containerW) {
+                        // Remove any max-width constraint and scale to container
+                        $img.css({
+                            'max-width': 'none',
+                            'width': '100%',
+                            'height': 'auto'
+                        });
+                    } else {
+                        // Use responsive behavior but don't upscale beyond natural size
+                        $img.css({
+                            'max-width': '100%',
+                            'width': '100%',
+                            'height': 'auto'
+                        });
+                    }
+                }
+
+                if (imgEl.complete) {
+                    doAdjust();
+                } else {
+                    $img.on('load', doAdjust);
+                }
+            }
+
+            adjustArtworkImage();
+            $(window).on('resize', function() {
+                adjustArtworkImage();
             });
         });
     </script>
