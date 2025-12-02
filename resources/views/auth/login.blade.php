@@ -35,6 +35,16 @@
                         </span>
                     @enderror
                 </div>
+
+                {{-- Checkbox: Masuk sebagai Admin --}}
+                <div class="mb-4">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="as_admin" value="1" class="form-checkbox"
+                            {{ old('as_admin') ? 'checked' : '' }}>
+                        <span class="ml-2">Masuk sebagai admin</span>
+                    </label>
+                </div>
+
                 <div class="button">
                     <button type="submit" class="btn-auth">
                         {{ __('MASUK') }}

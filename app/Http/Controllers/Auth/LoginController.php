@@ -5,34 +5,21 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
+     * Default redirect for non-admin users (not used by our custom login but kept).
      *
      * @var string
      */
     protected $redirectTo = '/';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -40,15 +27,61 @@ class LoginController extends Controller
     }
 
     /**
-     * Log the user out of the application.
+     * Override default login to support "login as admin" checkbox logic.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+            'as_admin' => 'nullable|boolean',
+        ]);
+
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $asAdmin = (bool) $request->input('as_admin', false);
+
+        // Find user by email
+        $user = User::where('email', $email)->first();
+
+        // If no user or password mismatch -> invalid credentials
+        if (! $user || ! Hash::check($password, $user->password)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Email atau password salah.']);
+        }
+
+        // If trying to login AS ADMIN, ensure user role is admin
+        if ($asAdmin) {
+            if (($user->role ?? '') !== 'admin') {
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Akun ini tidak memiliki akses admin.']);
+            }
+            // proceed login as admin
+            Auth::login($user, $request->filled('remember'));
+            $request->session()->regenerate();
+            addLog($user->id, 'login', 'Admin login ke sistem');
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        // Not admin login: log in as regular user (even if role = admin)
+        Auth::login($user, $request->filled('remember'));
+        $request->session()->regenerate();
+        addLog($user->id, 'login', 'User login ke sistem');
+
+        // redirect to exploration (homepage)
+        return redirect()->intended(route('exploration'));
+    }
+
+    /**
+     * Log the user out of the application.
      */
     public function logout(Request $request)
     {
-        // Log activity before logout
-        $userId = \Illuminate\Support\Facades\Auth::id();
+        $userId = Auth::id();
         if ($userId) {
             addLog($userId, 'logout', 'User logout dari sistem');
         }
@@ -58,19 +91,16 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // After logout, go to login page
+        return redirect('/login');
     }
 
     /**
-     * The user has been authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
+     * Keep the trait's authenticated method as fallback (not used by our login override).
+     * Left empty or minimal.
      */
     protected function authenticated(Request $request, $user)
     {
-        // Log activity setelah login berhasil
-        addLog($user->id, 'login', 'User login ke sistem');
+        // no-op: handled by custom login()
     }
 }
