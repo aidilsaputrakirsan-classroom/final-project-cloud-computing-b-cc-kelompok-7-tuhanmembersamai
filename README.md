@@ -1,66 +1,299 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Artwork GallerySI — Kelompok 7 (TuhanMembersamai)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-10+-FF2D20?style=flat&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?style=flat&logo=php&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-## About Laravel
+Proyek ini adalah aplikasi galeri karya (artwork sharing) berbasis Laravel. Pengguna dapat mengunggah karya, memberi komentar dan like, mengelola kategori, serta admin memiliki panel untuk manajemen post, kategori, dan activity log. Storage gambar diintegrasikan dengan Supabase Storage (public URLs) dan ada fallback ke storage lokal.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Isi
+- [Artwork GallerySI — Kelompok 7 (TuhanMembersamai)](#artwork-gallerysi--kelompok-7-tuhanmembersamai)
+- [Daftar Isi](#daftar-isi)
+- [Tentang](#tentang)
+- [Fitur (Ringkasan)](#fitur-ringkasan)
+- [Fitur Berdasarkan Role](#fitur-berdasarkan-role)
+  - [Fitur User](#fitur-user)
+  - [Fitur Admin](#fitur-admin)
+- [Tech Stack](#tech-stack)
+- [Instalasi \& Persiapan](#instalasi--persiapan)
+- [Konfigurasi Supabase](#konfigurasi-supabase)
+- [Struktur Database](#struktur-database)
+- [Relasi Database (Ringkas)](#relasi-database-ringkas)
+- [Workflow (User \& Admin)](#workflow-user--admin)
+  - [Upload Artwork (User)](#upload-artwork-user)
+  - [Hapus Artwork (User)](#hapus-artwork-user)
+  - [Moderasi / Manajemen (Admin)](#moderasi--manajemen-admin)
+- [Troubleshooting Cepat](#troubleshooting-cepat)
+- [Kontribusi](#kontribusi)
+- [Lisensi](#lisensi)
+- [Stack \& dependensi](#stack--dependensi)
+- [Persiapan \& Instalasi](#persiapan--instalasi)
+- [Konfigurasi Supabase \& Troubleshooting](#konfigurasi-supabase--troubleshooting)
+- [Struktur Singkat (file/folder penting)](#struktur-singkat-filefolder-penting)
+- [Cara Kerja Upload (ringkas)](#cara-kerja-upload-ringkas)
+- [Tips Debug cepat](#tips-debug-cepat)
+- [Contribution](#contribution)
+- [Lisensi](#lisensi-1)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tentang
+Proyek ini adalah aplikasi galeri karya (artwork sharing) berbasis Laravel. Pengguna dapat mengunggah karya, memberi komentar dan like, mengelola kategori, serta admin memiliki panel untuk manajemen post, kategori, dan activity log. Storage gambar diintegrasikan dengan Supabase Storage (public URLs) dan ada fallback ke storage lokal.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fitur (Ringkasan)
+- Upload artwork (gambar) dan simpan URL dari Supabase
+- Lihat galeri (profil & eksplorasi publik)
+- Komentar dan Like pada artwork
+- Kategori dan pengelompokan artwork
+- Profil pengguna dengan foto
+- Halaman admin: kelola posts, categories, activity logs
+- Pencatatan activity log (upload, delete, update)
 
-## Learning Laravel
+## Fitur Berdasarkan Role
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Fitur User
+- Daftar / Login / Logout
+- Kelola profil (edit data, foto profil)
+- Unggah artwork (upload gambar + deskripsi + pilih kategori)
+- Lihat koleksi karya pribadi (profil)
+- Melihat galeri publik / exploration
+- Memberi komentar pada artwork
+- Memberi like pada artwork
+- Hapus karya sendiri
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Fitur Admin
+- Login admin dengan role khusus
+- Melihat semua artwork dan metadata
+- Menghapus atau mengelola artwork (jika diperlukan)
+- Kelola kategori (CRUD kategori)
+- Melihat Activity Log (riwayat aksi pengguna)
+- Mengelola post atau konten lain pada panel admin
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tech Stack
+- Backend: Laravel (PHP)
+- Frontend: Blade + Bootstrap + custom CSS/JS
+- Database: PostgreSQL (Supabase) atau yang dikonfigurasi di `.env`
+- Storage: Supabase Storage (bucket `artworks`) dan fallback local disk
+- HTTP client: Laravel HTTP Client / Guzzle
 
-## Laravel Sponsors
+## Instalasi & Persiapan
+1. Clone repo
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```powershell
+git clone https://github.com/aidilsaputrakirsan-classroom/final-project-cloud-computing-b-cc-kelompok-7-tuhanmembersamai.git
+cd final-project-cloud-computing-b-cc-kelompok-7-tuhanmembersamai
+```
 
-### Premium Partners
+2. Install dependencies
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```powershell
+composer install
+npm install
+```
 
-## Contributing
+3. Setup environment
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```powershell
+copy .env.example .env
+php artisan key:generate
+```
 
-## Code of Conduct
+4. Migrate & seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```powershell
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+5. (Optional) buat symlink jika pakai storage lokal
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```powershell
+php artisan storage:link
+```
 
-## License
+## Konfigurasi Supabase
+Tambahkan variabel ini di `.env`:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+SUPABASE_URL=https://<your-project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+SUPABASE_BUCKET=artworks
+```
+
+PENTING: `SUPABASE_URL` harus lengkap (termasuk `https://`)—jika kosong upload akan mencoba memanggil path `/storage/v1/...` tanpa host, menghasilkan "cURL error 6: Could not resolve host: storage".
+
+## Struktur Database
+Berikut tabel utama yang dipakai di aplikasi ini (ringkasan):
+
+- `users` — pengguna (id, name, email, password, image, role, ...)
+- `artworks` — karya (id, user_id, image, description, category_id, created_at)
+- `categories` — kategori artwork (id, name)
+- `comments` — komentar (id, artwork_id, user_id, content, created_at)
+- `likes` — like (id, artwork_id, user_id)
+- `posts` — (opsional, jika ada fitur post/admin)
+- `activity_logs` — catatan aktivitas (id, user_id, action, metadata, created_at)
+
+## Relasi Database (Ringkas)
+- `User` hasMany `Artwork` (users.id -> artworks.user_id)
+- `Artwork` belongsTo `User` (artworks.user_id -> users.id)
+- `Artwork` belongsTo `Category` (artworks.category_id -> categories.id)
+- `Artwork` hasMany `Comment` (comments.artwork_id -> artworks.id)
+- `Artwork` hasMany `Like` (likes.artwork_id -> artworks.id)
+- `User` hasMany `Comment` and `Like` (comments.user_id, likes.user_id)
+- `ActivityLog` belongsTo `User` (activity_logs.user_id -> users.id)
+
+Contoh diagram relasi (ER-style, ASCII):
+
+```
+users (1)  ─── (n) artworks
+users (1)  ─── (n) comments
+users (1)  ─── (n) likes
+users (1)  ─── (n) activity_logs
+
+categories (1)  ─── (n) artworks
+
+artworks (1)  ─── (n) comments
+artworks (1)  ─── (n) likes
+
+# Ringkasan relasi utama:
+# - Satu user dapat memiliki banyak artwork, komentar, like, dan activity log
+# - Satu artwork dimiliki oleh satu user dan dapat memiliki banyak komentar & like
+# - Satu kategori dapat memiliki banyak artwork
+```
+
+## Workflow (User & Admin)
+
+### Upload Artwork (User)
+1. User pilih menu Unggah → isi deskripsi + pilih file gambar + kategori.
+2. Frontend submit form ke `ArtworkController::store()`.
+3. Controller memanggil `SupabaseStorageService::upload()`:
+	 - Service membaca file, membangun URL upload: `{$SUPABASE_URL}/storage/v1/object/{bucket}/{path}`
+	 - Mengirim POST dengan body file ke Supabase Storage.
+4. Supabase merespon → service mengembalikan public URL: `{$SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}`.
+5. Controller menyimpan record `artworks` dengan `image` berisi URL publik.
+6. User dapat melihat karya di profil dan gallery publik.
+
+### Hapus Artwork (User)
+1. User klik Hapus pada karya sendiri.
+2. Controller menghapus record DB; (opsional) operasi delete ke Supabase Storage belum diimplementasikan di versi ini.
+
+### Moderasi / Manajemen (Admin)
+1. Admin membuka panel admin → bisa melihat semua artworks.
+2. Admin dapat menghapus/mengelola kategori dan melihat activity logs.
+
+## Troubleshooting Cepat
+- Error "cURL error 6: Could not resolve host: storage" → cek `SUPABASE_URL` di `.env`, jalankan:
+
+```powershell
+php artisan config:clear
+php artisan cache:clear
+php artisan config:cache
+```
+
+- Jika gambar tidak tampil dan URL disimpan penuh (https://...), pastikan view tidak memanggil `asset('storage/' . $image)` pada URL penuh — gunakan pola: jika `image` dimulai dengan `http`/`https` pakai langsung, jika tidak pakai `asset('storage/...')`.
+
+## Kontribusi
+- Fork, buat branch fitur, commit, push, PR. Ikuti standar PSR-12.
+
+## Lisensi
+- MIT
+
+---
+
+Perubahan ini menambahkan TOC, memisahkan fitur User/Admin, menambahkan struktur DB, relasi, dan workflow upload/hapus/manajemen.
+
+## Stack & dependensi
+- Backend: Laravel (PHP)
+- Storage: Supabase Storage (S3-compatible endpoint)
+- DB: PostgreSQL (via Supabase) atau konfigurasi lain sesuai `.env`
+- Frontend: Bootstrap + custom CSS/JS
+
+## Persiapan & Instalasi
+
+1. Clone repository
+
+```powershell
+git clone https://github.com/aidilsaputrakirsan-classroom/final-project-cloud-computing-b-cc-kelompok-7-tuhanmembersamai.git
+cd final-project-cloud-computing-b-cc-kelompok-7-tuhanmembersamai
+```
+
+2. Install dependencies
+
+```powershell
+composer install
+npm install
+```
+
+3. Salin environment dan generate APP_KEY
+
+```powershell
+copy .env.example .env
+php artisan key:generate
+```
+
+4. Konfigurasi `.env` (poin penting untuk Supabase)
+
+Contoh variabel Supabase yang harus ada:
+
+```env
+DB_URL=postgresql://<user>:<pass>@<host>:5432/postgres
+SUPABASE_URL=https://<your-project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+SUPABASE_BUCKET=artworks
+FILESYSTEM_DISK=local
+```
+
+Catatan: `SUPABASE_URL` harus lengkap (termasuk `https://<project>.supabase.co`). Jika kosong atau salah, upload akan gagal dengan error seperti "cURL error 6: Could not resolve host: storage".
+
+5. Buat symbolic link storage (jika pakai storage lokal)
+
+```powershell
+php artisan storage:link
+```
+
+6. Jalankan migrasi dan seeder
+
+```powershell
+php artisan migrate --seed
+```
+
+7. Jalankan dev server
+
+```powershell
+php artisan serve
+npm run dev
+```
+
+## Konfigurasi Supabase & Troubleshooting
+- Pastikan `SUPABASE_URL` di `.env` diisi dengan host Supabase (mis. `https://ejxrzekncqjgkpclools.supabase.co`).
+- Jika muncul error saat upload: "cURL error 6: Could not resolve host: storage" → artinya aplikasi mengirim request ke path `/storage/v1/...` tanpa host. Periksa `SUPABASE_URL`, jalankan `php artisan config:clear` dan `php artisan cache:clear` lalu coba lagi.
+- Di development kami menonaktifkan verifikasi SSL sementara (`verify => false`) untuk memudahkan debug. Jangan gunakan ini di production; gunakan CA certificate yang valid.
+
+## Struktur Singkat (file/folder penting)
+- `app/Services/SupabaseStorageService.php` — service untuk upload ke Supabase
+- `app/Http/Controllers/User/ArtworkController.php` — controller upload dan list karya pengguna
+- `app/Models/Artwork.php`, `Category.php`, `Comment.php`, `Like.php`, `ActivityLog.php` — model data utama
+- `resources/views/pages` — tampilan: profile, exploration, detail, admin pages
+- `config/filesystems.php` — konfigurasi disk Supabase (endpoint pada `disks.supabase.endpoint`)
+
+## Cara Kerja Upload (ringkas)
+- UI mengirim file ke `ArtworkController::store()`
+- Controller memanggil `SupabaseStorageService::upload()` yang membangun URL upload `{$SUPABASE_URL}/storage/v1/object/{bucket}/{path}` dan mengirim POST dengan body file
+- Setelah sukses, Service mengembalikan public URL `{$SUPABASE_URL}/storage/v1/object/public/{bucket}/{path}` yang disimpan ke database dan ditampilkan di view
+
+## Tips Debug cepat
+- Pastikan `.env` berisi `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY`.
+- Hapus cache konfigurasi bila mengganti `.env` di server:
+
+```powershell
+php artisan config:clear
+php artisan cache:clear
+php artisan config:cache
+```
+
+- Periksa `storage/logs/laravel.log` untuk baris log yang memuat `Supabase upload URL:` (sudah ditambahkan di service) — itu akan menunjukkan URL yang dipakai untuk upload.
+
+## Contribution
+- Fork → branch → commit → PR. Ikuti PSR-12.
+
+## Lisensi
+- MIT
+
+---
