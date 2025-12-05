@@ -12,8 +12,12 @@ Proyek ini adalah aplikasi galeri karya (artwork sharing) berbasis Laravel. Peng
 - [Tentang](#tentang)
 - [Fitur (Ringkasan)](#fitur-ringkasan)
 - [Fitur Berdasarkan Role](#fitur-berdasarkan-role)
-  - [Fitur User](#fitur-user)
-  - [Fitur Admin](#fitur-admin)
+- [Role \& Permissions](#role--permissions)
+- [Fitur Berdasarkan Role (penjelasan rinci)](#fitur-berdasarkan-role-penjelasan-rinci)
+  - [Guest](#guest)
+  - [User (Authenticated)](#user-authenticated)
+  - [Admin](#admin)
+- [Implementasi rekomendasi](#implementasi-rekomendasi)
 - [Tech Stack](#tech-stack)
 - [Instalasi \& Persiapan](#instalasi--persiapan)
 - [Konfigurasi Supabase](#konfigurasi-supabase)
@@ -49,23 +53,59 @@ Proyek ini adalah aplikasi galeri karya (artwork sharing) berbasis Laravel. Peng
 
 ## Fitur Berdasarkan Role
 
-### Fitur User
-- Daftar / Login / Logout
-- Kelola profil (edit data, foto profil)
-- Unggah artwork (upload gambar + deskripsi + pilih kategori)
-- Lihat koleksi karya pribadi (profil)
-- Melihat galeri publik / exploration
-- Memberi komentar pada artwork
-- Memberi like pada artwork
-- Hapus karya sendiri
+## Role & Permissions
 
-### Fitur Admin
-- Login admin dengan role khusus
-- Melihat semua artwork dan metadata
-- Menghapus atau mengelola artwork (jika diperlukan)
-- Kelola kategori (CRUD kategori)
-- Melihat Activity Log (riwayat aksi pengguna)
-- Mengelola post atau konten lain pada panel admin
+Aplikasi menggunakan model role sederhana untuk membedakan hak akses. Secara default ada tiga tipe peran yang relevan untuk fitur galeri ini:
+
+- **Guest (tidak terautentikasi)**: dapat melihat galeri publik dan halaman eksplorasi, tetapi tidak dapat mengunggah, memberi komentar, atau memberi like.
+- **User (authenticated)**: dapat mengunggah karya, mengedit profil, memberi komentar dan like, serta menghapus karya miliknya sendiri.
+- **Admin**: memiliki semua hak User ditambah kemampuan untuk mengelola kategori, melihat dan mengelola semua artwork, serta meninjau activity logs.
+
+Contoh mapping permission (implementasi bisa menggunakan `spatie/laravel-permission` atau guard bawaaan):
+
+- `artwork.create` — user dapat mengunggah artwork
+- `artwork.update` — owner atau admin dapat mengubah metadata/artwork
+- `artwork.delete` — owner atau admin dapat menghapus artwork
+- `comment.create` — user dapat menambahkan komentar
+- `like.create` — user dapat memberi like
+- `category.manage` — admin dapat membuat/edit/hapus kategori
+- `activity.view` — admin dapat melihat activity logs
+
+## Fitur Berdasarkan Role (penjelasan rinci)
+
+### Guest
+- Akses: Tidak perlu login.
+- Fitur utama:
+  - Lihat galeri publik (semua artwork yang bersifat public).
+  - Lihat halaman detail artwork (foto, deskripsi, jumlah like, komentar).
+  - Menelusuri kategori dan filter.
+
+### User (Authenticated)
+- Akses: harus membuat akun dan login.
+- Fitur utama & penjelasan:
+  - Unggah Artwork (`artwork.create`): upload file gambar ke Supabase Storage, isi deskripsi, pilih kategori. Sistem menyimpan URL publik dan menambahkan record `artworks`.
+  - Kelola Profil: mengubah nama, bio, foto profil. Foto profil dapat diunggah ke local storage atau Supabase sesuai konfigurasi.
+  - Komentar (`comment.create`): menulis komentar pada artwork. Komentar disimpan di tabel `comments` dengan relasi ke `users` dan `artworks`.
+  - Like (`like.create`): beri/angkat like pada artwork — disimpan di tabel `likes` untuk menghindari duplikasi.
+  - Hapus Karya (`artwork.delete`): pengguna hanya dapat menghapus karya yang dimiliki sendiri; action ini menghapus record DB. (Catatan: penghapusan file dari Supabase Storage bersifat opsional / belum otomatis di versi ini — bisa ditambahkan.)
+  - Melihat histori aktivitas pribadi (opsional jika tersedia di UI).
+
+### Admin
+- Akses: role admin (diterapkan via `role` atau permission set).
+- Fitur utama & penjelasan:
+  - Manajemen Artwork: melihat semua karya, menghapus karya bermasalah, atau mengedit metadata bila diperlukan (`artwork.update`, `artwork.delete`).
+  - Kelola Kategori (`category.manage`): CRUD kategori sehingga admin dapat mengatur struktur kategori yang digunakan oleh user saat mengunggah.
+  - Lihat Activity Log (`activity.view`): memonitor aksi penting seperti upload, delete, update, dan login user; memudahkan auditing dan moderasi.
+  - Moderasi Konten: menandai/menghapus komentar tidak pantas, memblokir user jika perlu (fitur ini bergantung pada implementasi tambahan).
+
+## Implementasi rekomendasi
+- Disarankan memakai `spatie/laravel-permission` untuk implementasi role/permission. Contoh flow:
+  1. Buat role `admin` dan `user`.
+  2. Tetapkan permission granular (`artwork.create`, `artwork.delete`, `category.manage`, dsb.).
+  3. Assign permission ke role dan assign role ke user di `UserSeeder` untuk user admin default.
+
+Dengan mapping permission yang jelas, Anda dapat menambahkan middleware pada route, mis. `->middleware('permission:artwork.create')` untuk melindungi endpoint upload.
+
 
 ## Tech Stack
 - Backend: Laravel (PHP)
