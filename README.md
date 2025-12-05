@@ -17,6 +17,21 @@ Proyek ini adalah aplikasi galeri karya (artwork sharing) berbasis Laravel. Peng
   - [Guest](#guest)
   - [User (Authenticated)](#user-authenticated)
   - [Admin](#admin)
+- [Screenshot](#screenshot)
+  - [1. Halaman Login](#1-halaman-login)
+  - [2. Halaman Utama](#2-halaman-utama)
+  - [3. Halaman Profil](#3-halaman-profil)
+  - [4. Form Upload Artwork](#4-form-upload-artwork)
+  - [5. Form Edit Profil](#5-form-edit-profil)
+  - [6. Halaman Notifikasi](#6-halaman-notifikasi)
+  - [7. View Artwork](#7-view-artwork)
+  - [8. Dashboard](#8-dashboard)
+  - [9. Manage User](#9-manage-user)
+  - [10. Manage Post](#10-manage-post)
+  - [11. Detail Post](#11-detail-post)
+  - [12. Manage Categories](#12-manage-categories)
+  - [13. Add Category](#13-add-category)
+  - [14. Activity Log](#14-activity-log)
 - [Implementasi rekomendasi](#implementasi-rekomendasi)
 - [Tech Stack](#tech-stack)
 - [Instalasi \& Persiapan](#instalasi--persiapan)
@@ -97,6 +112,64 @@ Contoh mapping permission (implementasi bisa menggunakan `spatie/laravel-permiss
   - Kelola Kategori (`category.manage`): CRUD kategori sehingga admin dapat mengatur struktur kategori yang digunakan oleh user saat mengunggah.
   - Lihat Activity Log (`activity.view`): memonitor aksi penting seperti upload, delete, update, dan login user; memudahkan auditing dan moderasi.
   - Moderasi Konten: menandai/menghapus komentar tidak pantas, memblokir user jika perlu (fitur ini bergantung pada implementasi tambahan).
+
+## Screenshot
+
+### 1. Halaman Login
+![Halaman Login](public/images/screenshots/01-login.png)
+*Halaman login dengan form email dan password*
+
+### 2. Halaman Utama
+![Halaman Utama](public/images/screenshots/02-mainpage.png)
+*Halaman utama yang menampilkan gambar*
+
+### 3. Halaman Profil
+![Halaman Profil](public/images/screenshots/03-profil.png)
+*Halaman profil dengan foto yang terunggah dan informasi akun*
+
+### 4. Form Upload Artwork
+![Form Upload](public/images/screenshots/04-uploadartwork.png)
+*Form untuk mengunggah foto baru*
+
+### 5. Form Edit Profil
+![Edit Profil](public/images/screenshots/05-editprofil.png)
+*Form untuk mengubah informasi profil*
+
+### 6. Halaman Notifikasi
+![Notifikasi](public/images/screenshots/06-notifikasi.png)
+*Halaman notifikasi yang menampilkan aktivitas pengguna lain terhadap karya yang diposting*
+
+### 7. View Artwork
+![View Artwork](public/images/screenshots/07-viewpost.png)
+*Halaman untuk menampilkan detail gambar*
+
+### 8. Dashboard
+![Dashboard](public/images/screenshots/08-dashboard.png)
+*Halaman dashboard untuk menampilkan informasi terkini dari aplikasi*
+
+### 9. Manage User
+![Manage User](public/images/screenshots/09-manageuser.png)
+*Halaman kelola user untuk melihat seluruh pengguna yang terdaftar dan menghapus pengguna*
+
+### 10. Manage Post
+![Manage Post](public/images/screenshots/10-managepost.png)
+*Halaman kelola post untuk melihat seluruh post yang ada dan menghapus post*
+
+### 11. Detail Post
+![Detail Post](public/images/screenshots/11-detailpost.png)
+*Halaman yang menampilkan detail post dan komentar pada post tersebut, serta menghapus komentar*
+
+### 12. Manage Categories
+![Manage Category](public/images/screenshots/12-managecategory.png)
+*Halaman untuk melihat dan mengelola category yang telah dibuat*
+
+### 13. Add Category
+![Add Category](public/images/screenshots/13-addcategory.png)
+*Form untuk menambahkan category baru*
+
+### 14. Activity Log
+![Activity Log](public/images/screenshots/14-activitylog.png)
+*Halaman untuk melihat aktivitas yang dilakukan oleh seluruh pengguna*
 
 ## Implementasi rekomendasi
 - Disarankan memakai `spatie/laravel-permission` untuk implementasi role/permission. Contoh flow:
